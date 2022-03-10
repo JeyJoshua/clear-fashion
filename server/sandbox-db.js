@@ -2,6 +2,8 @@
 const dedicatedbrand = require('./sites/dedicatedbrand');
 const loom = require('./sites/loom');
 const db = require('./db');
+const {getDB} = require("./db");
+const db2= getDB();
 
 async function sandbox () {
   try {
@@ -45,29 +47,39 @@ async function sandbox () {
     products.push(results.flat());
     products = products.flat();
 
+
+
+    //const result2 = db.insert(products);
+
+    //console.log(result2);
+
     console.log('\n');
 
     console.log(`👕 ${products.length} total of products found`);
 
-    console.log('\n');
+    const brand = 'loom';
+    const prod = await db.find({brand});
+    console.log("Tout les produits loom");
 
-    const result = await db.insert(products);
+    console.log(prod);
 
-    console.log(`💽  ${result.insertedCount} inserted products`);
+    // 2
+    const price='price';
+    const prod2 = await db.find({'price':{$lt:50}});
+    console.log('Price less than 50');
+    console.log(prod2);
 
-    console.log('\n');
+   //3
+    const sorted = await db.sort({}, {'price':1});
+    console.log(`👕 ${sorted.length} total of products sorted by price`);
+    console.log(sorted);
 
-    console.log('💽  Find Loom products only');
-
-    const loomOnly = await db.find({'brand': 'loom'});
-
-    console.log(`👕 ${loomOnly.length} total of products found for Loom`);
-    console.log(loomOnly);
-
+    //db2.close();
     db.close();
   } catch (e) {
     console.error(e);
   }
 }
+
 
 sandbox();
